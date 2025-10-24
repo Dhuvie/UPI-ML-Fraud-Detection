@@ -1,0 +1,191 @@
+# ============================================
+# SENSITIVE DATA - NEVER COMMIT
+# ============================================
+# API Keys and Secrets
+*.key
+*.pem
+*.p12
+.env
+.env.*
+!.env.example
+secrets/
+credentials/
+kaggle.json
+
+# Passwords and Tokens
+*password*
+*token*
+*secret*
+*api_key*
+
+# ============================================
+# DATASETS - TOO LARGE FOR GIT
+# ============================================
+# Raw data
+data/raw/*.csv
+data/raw/*.json
+data/raw/*.parquet
+data/raw/*.xlsx
+
+# Processed data
+data/processed/*.csv
+data/processed/*.pkl
+data/processed/*.npy
+
+# ============================================
+# MODELS - TOO LARGE FOR GIT
+# ============================================
+models/*.pkl
+models/*.h5
+models/*.pt
+models/*.pth
+models/*.onnx
+models/*.joblib
+*.model
+
+# ============================================
+# RESULTS AND OUTPUTS
+# ============================================
+results/*.png
+results/*.jpg
+results/*.pdf
+results/*.csv
+results/*.html
+
+# Logs
+*.log
+logs/
+*.out
+
+# ============================================
+# PYTHON
+# ============================================
+# Byte-compiled / optimized
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+.virtualenv
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# ============================================
+# IDE AND EDITORS
+# ============================================
+# VS Code
+.vscode/
+*.code-workspace
+
+# PyCharm
+.idea/
+*.iml
+*.iws
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# ============================================
+# OPERATING SYSTEM
+# ============================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+.directory
+.Trash-*
+
+# ============================================
+# TEMPORARY FILES
+# ============================================
+*.tmp
+*.temp
+*.bak
+*.backup
+*.cache
+.cache/
+
+# ============================================
+# FLASK
+# ============================================
+instance/
+.webassets-cache
+flask_session/
+
+# ============================================
+# DATABASE
+# ============================================
+*.db
+*.sqlite
+*.sqlite3
+
+# ============================================
+# DOCUMENTATION BUILD
+# ============================================
+docs/_build/
+site/
+
+# ============================================
+# KEEP THESE DIRECTORIES
+# ============================================
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!models/.gitkeep
+!results/.gitkeep

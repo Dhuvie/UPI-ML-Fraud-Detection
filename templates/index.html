@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPI Fraud Detection System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .main-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: none;
+        }
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 25px;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+        }
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            padding: 10px 15px;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        .btn-predict {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 12px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
+        .btn-predict:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .result-card {
+            margin-top: 20px;
+            border-radius: 15px;
+            animation: slideIn 0.5s ease-out;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .result-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+        .probability-bar {
+            height: 30px;
+            border-radius: 15px;
+            background: #e9ecef;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        .probability-fill {
+            height: 100%;
+            transition: width 1s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        .info-badge {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 5px;
+        }
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <div class="text-center mb-4">
+            <h1 class="text-white mb-2">
+                <i class="fas fa-shield-alt"></i> UPI Fraud Detection System
+            </h1>
+            <p class="text-white-50">Real-time fraud detection using machine learning</p>
+        </div>
+
+        <!-- Input Form -->
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="fas fa-file-invoice-dollar"></i> Transaction Details</h4>
+            </div>
+            <div class="card-body p-4">
+                <form id="fraudForm">
+                    <div class="row">
+                        <!-- Transaction Type -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Transaction Type</label>
+                            <select class="form-select" name="type" required>
+                                <option value="PAYMENT">Payment</option>
+                                <option value="TRANSFER">Transfer</option>
+                                <option value="CASH_OUT">Cash Out</option>
+                                <option value="DEBIT">Debit</option>
+                                <option value="CASH_IN">Cash In</option>
+                            </select>
+                        </div>
+
+                        <!-- Amount -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Amount (₹)</label>
+                            <input type="number" class="form-control" name="amount" step="0.01" placeholder="10000.00" required>
+                        </div>
+
+                        <!-- Step -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Transaction Step</label>
+                            <input type="number" class="form-control" name="step" placeholder="1" value="1" required>
+                        </div>
+
+                        <!-- Sender ID -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Sender ID</label>
+                            <input type="text" class="form-control" name="nameOrig" placeholder="C1234567890" required>
+                        </div>
+
+                        <!-- Sender Old Balance -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Sender Old Balance (₹)</label>
+                            <input type="number" class="form-control" name="oldbalanceOrg" step="0.01" placeholder="50000.00" required>
+                        </div>
+
+                        <!-- Sender New Balance -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Sender New Balance (₹)</label>
+                            <input type="number" class="form-control" name="newbalanceOrig" step="0.01" placeholder="40000.00" required>
+                        </div>
+
+                        <!-- Receiver ID -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Receiver ID</label>
+                            <input type="text" class="form-control" name="nameDest" placeholder="M9876543210" required>
+                        </div>
+
+                        <!-- Receiver Old Balance -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Receiver Old Balance (₹)</label>
+                            <input type="number" class="form-control" name="oldbalanceDest" step="0.01" placeholder="0.00" required>
+                        </div>
+
+                        <!-- Receiver New Balance -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Receiver New Balance (₹)</label>
+                            <input type="number" class="form-control" name="newbalanceDest" step="0.01" placeholder="10000.00" required>
+                        </div>
+                    </div>
+                    
+                    <!-- Hidden field - automatically set to 0 -->
+                    <input type="hidden" name="isFlaggedFraud" value="0">
+
+                    <!-- Submit Button -->
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-primary btn-predict">
+                            <i class="fas fa-search"></i> Analyze Transaction
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div id="loading" class="text-center mt-4" style="display: none;">
+            <div class="spinner-border text-light" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="text-white mt-2">Analyzing transaction...</p>
+        </div>
+
+        <!-- Result Card -->
+        <div id="resultCard" class="card result-card" style="display: none;">
+            <div class="card-body p-4 text-center">
+                <div id="resultIcon" class="result-icon"></div>
+                <h3 id="resultTitle" class="mb-3"></h3>
+                
+                <div class="probability-bar">
+                    <div id="probabilityFill" class="probability-fill"></div>
+                </div>
+                
+                <div class="mt-4">
+                    <span id="riskBadge" class="info-badge"></span>
+                    <span id="fraudBadge" class="info-badge"></span>
+                </div>
+                
+                <div class="alert mt-4" id="recommendation" role="alert"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('fraudForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('resultCard').style.display = 'none';
+            
+            // Get form data
+            const formData = new FormData(e.target);
+            
+            try {
+                // Send request
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                // Hide loading
+                document.getElementById('loading').style.display = 'none';
+                
+                if (result.success) {
+                    // Show result
+                    displayResult(result);
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                alert('Error: ' + error.message);
+            }
+        });
+        
+        function displayResult(result) {
+            const resultCard = document.getElementById('resultCard');
+            const resultIcon = document.getElementById('resultIcon');
+            const resultTitle = document.getElementById('resultTitle');
+            const probabilityFill = document.getElementById('probabilityFill');
+            const riskBadge = document.getElementById('riskBadge');
+            const fraudBadge = document.getElementById('fraudBadge');
+            const recommendation = document.getElementById('recommendation');
+            
+            // Set icon and title
+            if (result.is_fraud) {
+                resultIcon.innerHTML = '<i class="fas fa-exclamation-triangle text-danger"></i>';
+                resultTitle.textContent = 'FRAUD DETECTED';
+                resultTitle.className = 'mb-3 text-danger';
+            } else {
+                resultIcon.innerHTML = '<i class="fas fa-check-circle text-success"></i>';
+                resultTitle.textContent = 'LEGITIMATE TRANSACTION';
+                resultTitle.className = 'mb-3 text-success';
+            }
+            
+            // Set probability bar
+            const probability = (result.probability * 100).toFixed(1);
+            probabilityFill.style.width = probability + '%';
+            probabilityFill.textContent = probability + '% Fraud Probability';
+            
+            if (result.risk_level === 'HIGH') {
+                probabilityFill.style.background = 'linear-gradient(90deg, #dc3545, #c82333)';
+            } else if (result.risk_level === 'MEDIUM') {
+                probabilityFill.style.background = 'linear-gradient(90deg, #ffc107, #e0a800)';
+            } else {
+                probabilityFill.style.background = 'linear-gradient(90deg, #28a745, #218838)';
+            }
+            
+            // Set badges
+            riskBadge.textContent = 'Risk: ' + result.risk_level;
+            riskBadge.className = 'info-badge bg-' + result.risk_color + ' text-white';
+            
+            fraudBadge.textContent = result.is_fraud ? 'FRAUD' : 'LEGITIMATE';
+            fraudBadge.className = 'info-badge bg-' + (result.is_fraud ? 'danger' : 'success') + ' text-white';
+            
+            // Set recommendation
+            recommendation.textContent = result.recommendation;
+            recommendation.className = 'alert alert-' + result.risk_color + ' mt-4';
+            
+            // Show result card
+            resultCard.style.display = 'block';
+            resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    </script>
+</body>
+</html>
