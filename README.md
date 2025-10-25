@@ -409,7 +409,7 @@ Response:
 
 ## Requirements
 
-- Python 3.8+
+- Python 3.7+
 - numpy
 - pandas
 - scikit-learn
